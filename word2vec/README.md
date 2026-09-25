@@ -33,6 +33,8 @@ python train.py --corpus my.txt             # 自己的语料: 空格分词的�
 | 速度 | 慢 (样本多) | 快数倍 |
 | 效果 | 低频词、语义类比更好 | 高频词、语法类比稍好, 更平滑 |
 
+**工程上怎么选**: 从目前纯工程化落地的角度看, 绝对的主流是 **Skip-gram**, 而且几乎必然搭配负采样 (Negative Sampling), 即 **SGNS** (Skip-Gram with Negative Sampling)。例如 fastText 的 `skipgram` 默认就是负采样; gensim 虽然默认 `sg=0` (CBOW), 实际使用时通常会设 `sg=1, negative=5~20`; 推荐系统里的 Item2Vec、图嵌入里的 Node2Vec 用的也是 SGNS。CBOW 和 hierarchical softmax 现在主要出现在教学和对比实验里。
+
 ## 负采样
 
 full softmax 每步要对 |V| 个词 (text8 约 7 万) 做点积并归一化。负采样把它变成 1 个正样本 + K 个噪声词的二分类:
