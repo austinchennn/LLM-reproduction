@@ -41,7 +41,7 @@ def train(cfg: Config):
     rng = np.random.default_rng(cfg.seed)
     # sparse embedding 的梯度在 MPS 上支持不完整, Mac 上直接用 CPU
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(cfg)
+    print(cfg, end="\n\n")
 
     # 数据
     t0 = time.time()
@@ -53,7 +53,7 @@ def train(cfg: Config):
     noise_table = torch.from_numpy(build_noise_table(vocab.counts)).to(device)
     kept = keep_prob[ids].sum()
     print(f"tokens={len(ids):,}  vocab={len(vocab):,}  下采样后约 {kept:,.0f} tokens/epoch  "
-          f"({time.time() - t0:.1f}s)")
+          f"({time.time() - t0:.1f}s)", end="\n\n")
 
     # 模型 & 优化器
     model = Word2Vec(len(vocab), cfg.dim).to(device)
@@ -91,6 +91,7 @@ def train(cfg: Config):
                 running = 0.0
         print(f"== epoch {epoch} done ({time.time() - t_epoch:.0f}s)")
         report(model, vocab, cfg.probes, cfg.analogies)
+        print()
 
     save(model, vocab, cfg)
     return model, vocab
