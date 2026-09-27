@@ -43,6 +43,13 @@ class Config:
         if self.out_dir is None:
             self.out_dir = os.path.join(HERE, "output", f"{self.mode}_d{self.dim}")
 
+    def __str__(self):
+        """每个字段一行, 冒号对齐"""
+        width = max(len(f.name) for f in fields(self))
+        lines = [f"  {f.name:<{width}} : {getattr(self, f.name)}" for f in fields(self)]
+        bar = "=" * 30
+        return "\n".join([f"{bar} Config {bar}", *lines, "=" * (len(bar) * 2 + 8)])
+
     @classmethod
     def from_args(cls, argv=None):
         """根据 dataclass 字段自动生成命令行参数 (列表类字段不暴露到命令行)"""
